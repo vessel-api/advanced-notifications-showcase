@@ -1,0 +1,16 @@
+node_modules
+dist
+.env
+.env.local
+.env.*.local
+npm-debug.log*
+.DS_Store
+
+# Build artefacts (regenerated at build time by scripts/build-geo.js)
+client/src/geo/europe.json
+client/src/geo/pois.json
+
+# Editor / IDE state — must never be committed
+.claude/
+.vscode/
+.idea/

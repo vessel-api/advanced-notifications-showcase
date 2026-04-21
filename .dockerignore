@@ -1,0 +1,16 @@
+node_modules
+.env
+.env.local
+dist
+.git
+*.log
+/tmp
+
+# Editor / IDE state — never bake into the image
+.claude
+.vscode
+.idea
+
+# README + license aren't needed at runtime, just in the repo
+README.md
+LICENSE
