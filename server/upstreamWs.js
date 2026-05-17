@@ -45,6 +45,12 @@ export function connectAdvancedUpstream({ wsBase, apiKey, name, onEvent, onStatu
     })
     ws.on('close', (code, reason) => {
       onStatus?.('closed', { code, reason: reason?.toString?.() ?? '' })
+      // ORDERING NOTE — this is the #1 bug customers ship with WS clients:
+      // close handlers race shutdown. The fix is to flip the `stopped` flag
+      // BEFORE calling ws.close() (see close() below) so this handler can
+      // tell "we asked for this" from "the server hung up on us". If the
+      // flag flipped *after* close() the handler would still see stopped===
+      // false and schedule a reconnect against a deliberately-shut socket.
       if (!stopped) {
         setTimeout(connect, backoff)
         backoff = Math.min(backoff * 2, 30_000)

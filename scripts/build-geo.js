@@ -114,11 +114,18 @@ function buildEurope() {
   return { type: 'Polygon', coordinates: [ring] }
 }
 
+// A GeoJSON linear ring must repeat its first vertex as the last. Hand-drawn
+// POI rings sometimes do, sometimes don't — normalize so turf is happy.
+function ringIsClosed(ring) {
+  if (ring.length < 2) return false
+  const first = ring[0]
+  const last = ring[ring.length - 1]
+  return first[0] === last[0] && first[1] === last[1]
+}
+
 function buildPOI(spec) {
   // Ensure the input ring closes (turf requires it) then buffer 2km.
-  const ring = spec.ring[0][0] === spec.ring[spec.ring.length - 1][0]
-    && spec.ring[0][1] === spec.ring[spec.ring.length - 1][1]
-    ? spec.ring : [...spec.ring, spec.ring[0]]
+  const ring = ringIsClosed(spec.ring) ? spec.ring : [...spec.ring, spec.ring[0]]
   const poly = turf.polygon([ring])
   const buffered = turf.buffer(poly, 2, { units: 'kilometers' })
 

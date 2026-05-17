@@ -31,6 +31,10 @@ export function useFeed() {
   useEffect(() => {
     let closed = false
     let backoff = 500
+    // Tracked so cleanup can clearTimeout any pending reconnect. The `closed`
+    // flag below already gates the inner connect() call, but holding a handle
+    // makes the cancellation explicit for anyone copy-pasting the pattern.
+    let reconnectTimer = null
 
     const connect = () => {
       if (closed) return
@@ -64,7 +68,7 @@ export function useFeed() {
       ws.addEventListener('close', () => {
         setLocalState('closed')
         if (!closed) {
-          setTimeout(connect, backoff)
+          reconnectTimer = setTimeout(connect, backoff)
           backoff = Math.min(backoff * 2, 10_000)
         }
       })
@@ -74,6 +78,7 @@ export function useFeed() {
     connect()
     return () => {
       closed = true
+      if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null }
       try { wsRef.current?.close() } catch {}
     }
   }, [])

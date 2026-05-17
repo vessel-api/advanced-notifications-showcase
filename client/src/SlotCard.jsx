@@ -11,7 +11,7 @@ export default function SlotCard({ slot, title, tone, blueprint, status, disable
   const active = Boolean(status?.prefillStatus)
   const state = status?.state || 'idle'
   const prefill = status?.prefillStatus
-  const vcount = status?.vesselCount ?? (status?.active ? status?.vesselCount : null)
+  const vcount = status?.vesselCount ?? null
 
   const handle = async (fn) => {
     setBusy(true)

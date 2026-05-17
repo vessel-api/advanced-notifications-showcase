@@ -5,6 +5,19 @@ import VesselDetails from './VesselDetails.jsx'
 import { useFeed } from './useFeed.js'
 import { europeBlueprint, poiBlueprints } from './blueprints.js'
 
+// Friendly short labels for the feed. On the wire the event type stays
+// "eta.draught_changed" (shared with classic notifications, not our call
+// to rename upstream) — this is demo-side polish only. Hoisted to module
+// scope so it isn't reallocated on every render (matches TYPE_TO_BADGE_LABEL
+// below).
+const TYPE_LABEL = {
+  'position.geofence_enter': 'enter',
+  'position.geofence_exit':  'exit',
+  'eta.draught_changed':     'draught',
+  'eta.destination_changed': 'destination',
+  'eta.eta_changed':         'eta shift'
+}
+
 export default function App() {
   const { localState, slots, events, registrySize } = useFeed()
   const [hasKey, setHasKey] = useState(false)
@@ -14,17 +27,6 @@ export default function App() {
   // { vessel, event } — the event is passed alongside the vessel so the
   // details card can render a "what changed" banner for the specific delta.
   const [selected, setSelected] = useState(null)
-
-  // Friendly short labels for the feed. On the wire the event type stays
-  // "eta.draught_changed" (shared with classic notifications, not our call
-  // to rename upstream) — this is demo-side polish only.
-  const TYPE_LABEL = {
-    'position.geofence_enter': 'enter',
-    'position.geofence_exit':  'exit',
-    'eta.draught_changed':     'draught',
-    'eta.destination_changed': 'destination',
-    'eta.eta_changed':         'eta shift'
-  }
 
   useEffect(() => {
     fetch('/api/config').then(r => r.json()).then(c => setHasKey(Boolean(c?.hasKey))).catch(() => {})
@@ -43,6 +45,10 @@ export default function App() {
       const body = await r.json()
       if (!r.ok) throw new Error(body?.error || `HTTP ${r.status}`)
       setHasKey(true)
+      // Drop the key from React state once the server has it — the input is
+      // unmounted alongside the modal, but clearing here means no stale copy
+      // sits in the closure for the lifetime of the page.
+      setApiKey('')
     } catch (e) { setKeyErr(e.message) }
     finally { setSubmittingKey(false) }
   }
@@ -122,8 +128,7 @@ export default function App() {
         ))}
         <div className="key-controls">
           {hasKey && (
-            <button className="ghost" onClick={clearKey}
-              style={{ background: 'transparent', color: '#94a3b8', border: '1px solid rgba(148,163,184,0.15)', padding: '6px 12px', borderRadius: 6, fontSize: 12, cursor: 'pointer' }}>
+            <button className="key-change" onClick={clearKey}>
               change API key
             </button>
           )}

@@ -146,19 +146,25 @@ body {
 .event-europe { border-left-color: var(--europe); }
 .event-poi { border-left-color: var(--poi); }
 .event-eta { border-left-color: #f59e0b; }
-.badge-poi { background: rgba(34, 211, 238, 0.18); color: var(--poi); }
-.badge-eta { background: rgba(245, 158, 11, 0.18); color: #f59e0b; }
 .event-line1 { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
 .event-line2 { display: flex; justify-content: space-between; align-items: center; gap: 6px; color: var(--muted); margin-top: 2px; }
 .event-line3 { margin-top: 2px; }
 .event-pos { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10px; color: var(--muted); opacity: 0.8; }
 .event-badge { font-size: 9px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.6px; padding: 1px 6px; border-radius: 3px; }
+.badge-poi { background: rgba(34, 211, 238, 0.18); color: var(--poi); }
 .badge-europe { background: rgba(168,85,247,0.18); color: var(--europe); }
+.badge-eta { background: rgba(245, 158, 11, 0.18); color: #f59e0b; }
 .event-type { font-weight: 600; color: var(--fg); }
 .event-vessel { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.event-time {}
 
 .key-controls { display: flex; justify-content: flex-end; }
+.key-change {
+  background: transparent; color: var(--muted);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 6px 12px; font-size: 12px; cursor: pointer;
+  transition: color 0.1s, border-color 0.1s;
+}
+.key-change:hover { color: var(--fg); border-color: var(--accent); }
 
 .event-clickable { cursor: pointer; transition: background 0.1s; }
 .event-clickable:hover { background: var(--panel); }
@@ -187,6 +193,35 @@ body {
   margin-top: 16px; padding-top: 10px; border-top: 1px solid var(--border);
   color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px;
 }
+
+/* Source provenance banners — the visible split between "data on the event"
+   and "data from a follow-up REST call". This is the punchline of the demo,
+   so the labels are explicit and colour-coded. */
+.details-source {
+  margin: 6px 0 2px; padding: 4px 8px;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px;
+  border-radius: 4px; border: 1px solid transparent;
+  display: inline-block;
+}
+.details-source code {
+  background: rgba(0,0,0,0.25); padding: 0 4px; border-radius: 3px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10px;
+}
+.details-source-event {
+  background: rgba(74, 222, 128, 0.12); color: #86efac;
+  border-color: rgba(74, 222, 128, 0.28);
+}
+.details-source-rest {
+  background: rgba(148, 163, 184, 0.12); color: var(--muted);
+  border-color: var(--border);
+}
+.details-fetch {
+  margin-top: 8px;
+  background: var(--panel-2); color: var(--fg);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 600;
+}
+.details-fetch:hover { border-color: var(--accent); color: var(--accent); }
 
 /* "What changed" banner — sits above the vessel name, tinted to match the
    event's map palette so the connection between dot colour and card is

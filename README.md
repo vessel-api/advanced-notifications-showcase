@@ -6,6 +6,16 @@ filters, per-port vessel lists, WebSocket event streaming, and click-through
 vessel details. Intended as a reference implementation and a sales demo — not
 a production harness.
 
+The event payload itself carries enough vessel context for most uses —
+identity (IMO/MMSI/ENI/name), classification (vessel_type, vessel_subtype),
+flag (country, country_code), dimensions (length, breadth), and on
+position-derived events the current heading, speed, lat/lon, nav status,
+and last AIS update. The click-through modal renders all of this directly
+from the WebSocket payload with **zero follow-up REST calls** for the
+common case. A single `vessels.get` is fetched lazily in the background
+only to fill the deeper static record (call sign, tonnage, ownership,
+build year, home port) — the modal opens instantly without waiting on it.
+
 Two types of notifications are pre-wired:
 
 - **Europe-wide ENI filter** — `any_vessel` mode over a 50 km-buffered
@@ -327,3 +337,5 @@ client/src/                       # React UI (Leaflet map, blueprint cards, deta
 ## License
 
 MIT — see [LICENSE](./LICENSE). Provided for demonstration purposes;
+copy, adapt, and ship the patterns in your own VesselAPI integration without
+attribution.
