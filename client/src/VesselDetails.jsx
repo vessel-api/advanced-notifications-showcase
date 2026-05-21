@@ -156,6 +156,9 @@ export default function VesselDetails({ vessel, event, onClose }) {
           <Row k="IMO"        v={fmt(vessel.imo)} />
           <Row k="MMSI"       v={fmt(vessel.mmsi)} />
           <Row k="ENI"        v={vessel.eni} />
+          <Row k="AIS name"   v={vessel.nameAIS && vessel.nameAIS !== (vessel.vesselName || '') ? vessel.nameAIS : null} />
+          <Row k="Type"       v={vessel.vesselType || d.vessel_type} />
+          <Row k="Subtype"    v={vessel.vesselSubtype} />
           <Row k="Dimensions" v={dim} />
         </dl>
 
@@ -172,6 +175,28 @@ export default function VesselDetails({ vessel, event, onClose }) {
               <Row k="ETA"         v={fmtTime(eta.eta)} />
               <Row k="Draught"     v={typeof eta.draught === 'number' ? `${eta.draught.toFixed(1)} m` : null} />
               <Row k="Last ping"   v={fmtTime(lastAIS)} />
+            </dl>
+          </>
+        )}
+
+        {/* Section 2.5: long-term observations our backend derives from AIS
+            history — carried in the event, no REST call. Rendered only when at
+            least one value is present (moored / sparse vessels may have none). */}
+        {(vessel.speedCalculatedAvg || vessel.speedObservedMax
+          || vessel.draughtCalculatedAvg || vessel.draughtObservedMax
+          || vessel.teu || vessel.summerDraught) && (
+          <>
+            <div className="details-section">Observed history · last 31 days</div>
+            <SourceBanner tone="event">
+              Derived from our AIS history · in the event · no REST call
+            </SourceBanner>
+            <dl className="details-grid">
+              <Row k="Avg speed"    v={vessel.speedCalculatedAvg ? `${Number(vessel.speedCalculatedAvg).toFixed(1)} kn` : null} />
+              <Row k="Max speed"    v={vessel.speedObservedMax ? `${Number(vessel.speedObservedMax).toFixed(1)} kn` : null} />
+              <Row k="Avg draught"  v={vessel.draughtCalculatedAvg ? `${Number(vessel.draughtCalculatedAvg).toFixed(1)} m` : null} />
+              <Row k="Max draught"  v={vessel.draughtObservedMax ? `${Number(vessel.draughtObservedMax).toFixed(1)} m` : null} />
+              <Row k="TEU"          v={vessel.teu ? fmt(vessel.teu) : null} />
+              <Row k="Summer draught" v={vessel.summerDraught ? `${Number(vessel.summerDraught).toFixed(1)} m` : null} />
             </dl>
           </>
         )}
