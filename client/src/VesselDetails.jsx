@@ -219,9 +219,6 @@ export default function VesselDetails({ vessel, event, onClose }) {
             <Row k="Call sign"     v={d.call_sign} />
             <Row k="Gross tonnage" v={fmt(d.gross_tonnage)} />
             <Row k="Deadweight"    v={fmt(d.deadweight_tonnage)} />
-            <Row k="Owner"         v={d.owner_name} />
-            <Row k="Manager"       v={d.manager_name} />
-            <Row k="Builder"       v={d.builder} />
             <Row k="Year built"    v={fmt(d.year_built)} />
             <Row k="Home port"     v={d.home_port} />
           </dl>
