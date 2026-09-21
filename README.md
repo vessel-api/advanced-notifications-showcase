@@ -298,14 +298,14 @@ Exceeded requests return HTTP 429 with `Retry-After: 60`:
 
 - 500 req / 5 min per source IP (any endpoint)
 - 3 000 req / 5 min per API key (any endpoint)
-- 300 req / 5 min per API key on `/v1/location/vessels/bounding-box` and
-  `/v1/location/vessels/radius`
+- 300 req / 5 min per API key across all `/v1/location/*` endpoints combined
+  (the bounding-box and radius variants for vessels, ports, dgps, lightaids,
+  modu and radiobeacons)
 
-Location searches also enforce a density cap, HTTP 400 with
-`code: "bounding_box_too_dense"`: bounding-box and radius queries whose
-`area × time window` would match more than 5 000 vessel positions are
-rejected before executing. Narrow the search area, or pass explicit
-`time.from` / `time.to` (RFC3339) to shrink the default 2-hour window.
+The vessel bounding-box and radius searches also reject any query whose time
+window (`time.to` minus `time.from`, RFC3339) exceeds 4 hours, with HTTP 400.
+The default window is the last 2 hours. See
+https://vesselapi.com/docs#rate-limits.
 
 ## Demo configuration
 
